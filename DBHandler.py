@@ -9,44 +9,46 @@ class DBHandler:
         self.commands = {
             "create":"""DROP TABLE IF EXISTS data; 
                CREATE TABLE data (
-                    number INTEGER PRIMARY KEY,
-                    series VARCHAR(5) NOT NULL,
-                    issue_date DATE NOT NULL,
-                    ending_date DATE NOT NULL,
-                    subject VARCHAR(50) NOT NULL,
-                    communication_type VARCHAR(50) NOT NULL,
-                    organization VARCHAR(50) NOT NULL,
-                    place VARCHAR(200) NOT NULL,
-                    category INTEGER,
-                    usage INTEGER,
-                    RES_name VARCHAR(50) NOT NULL,
-                    MAC VARCHAR(50),
-                    call_sign VARCHAR(50),
-                    network_id VARCHAR(50),
-                    azimuth VARCHAR(50),
-                    KA_name VARCHAR(50),
-                    KA_place VARCHAR(50),
-                    power VARCHAR(50),
-                    rec_freq VARCHAR(100),
-                    trans_freq VARCHAR(100),
-                    formula VARCHAR(50),
-                    class VARCHAR(50),
-                    status VARCHAR(50)
+                    number VARCHAR(100),
+                    series VARCHAR(100),
+                    issue_date VARCHAR(100),
+                    ending_date VARCHAR(100),
+                    subject VARCHAR(100),
+                    communication_type VARCHAR(100),
+                    organization VARCHAR(100),
+                    place VARCHAR(255),
+                    latitude VARCHAR(100),
+                    longitude VARCHAR(100),
+                    category VARCHAR(100),
+                    usage VARCHAR(100),
+                    RES_name VARCHAR(100),
+                    MAC VARCHAR(100),
+                    call_sign VARCHAR(100),
+                    network_id VARCHAR(100),
+                    azimuth VARCHAR(100),
+                    KA_name VARCHAR(100),
+                    KA_place VARCHAR(100),
+                    power VARCHAR(100),
+                    rec_freq VARCHAR(255),
+                    trans_freq VARCHAR(255),
+                    formula VARCHAR(100),
+                    class VARCHAR(100),
+                    status VARCHAR(100)
                     );""",
             "show": """SELECT * FROM data"""
         }
 
         self.connect()
 
-
-    def read_xlsx(self):
+    @staticmethod
+    def read_xlsx():
         dataframe = openpyxl.load_workbook("data.xlsx")
         dataframe1 = dataframe.active
-
+        table = [[] for i in range(dataframe1.max_row)]
         for row in range(1, dataframe1.max_row):
             for col in dataframe1.iter_cols(1, dataframe1.max_column):
-                print(col[row].value)
-                pass
+                table[row].append(col[row].value)
+        return table
 
     def connect(self):
         try:
@@ -83,10 +85,44 @@ class DBHandler:
             print(error)
             self.connect()
 
+    def fill_table(self):
+        if not self.conn:
+            self.connect()
+        try:
+            column_names = [desc[0] for desc in self.cur.description]
+            command = "INSERT INTO data("
+            c = 0
+            for i in column_names:
+                command += (i + ", ")
+                c += 1
+            command = command[:-2] + ") VALUES(%(val)s)"
+            frame = openpyxl.load_workbook("data.xlsx").active
+
+            for row in range(1, frame.max_row):
+                tmp = []
+                for col in frame.iter_cols(0, frame.max_column):
+                    if not col[row].value:
+                        tmp.append('')
+                    else:
+                        tmp.append(col[row].value)
+                if len(tmp) == 25:
+                    value = str(tmp).replace('[', '(').replace(']', ')')
+                    print(value)
+                    print(f"({c}, {len(tmp)})")
+                    self.cur.execute(command, {"val": value})
+
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+            self.connect()
+
+
+
 
 if __name__ == "__main__":
     db = DBHandler()
     db.create_table()
     db.show_table()
+    #print(db.read_xlsx())
+    db.fill_table()
 
 

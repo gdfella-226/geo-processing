@@ -5,8 +5,10 @@ import psycopg2
 class DBHandler:
     def __init__(self):
         self.conn = None
+        self.cur = None
         self.commands = {
-            """CREATE TABLE data (
+            "create":"""DROP TABLE IF EXISTS data; 
+               CREATE TABLE data (
                     number INTEGER PRIMARY KEY,
                     series VARCHAR(5) NOT NULL,
                     issue_date DATE NOT NULL,
@@ -30,8 +32,12 @@ class DBHandler:
                     formula VARCHAR(50),
                     class VARCHAR(50),
                     status VARCHAR(50)
-                    )""": "create"
+                    );""",
+            "show": """SELECT * FROM data"""
         }
+
+        self.connect()
+
 
     def read_xlsx(self):
         dataframe = openpyxl.load_workbook("data.xlsx")
@@ -44,21 +50,43 @@ class DBHandler:
 
     def connect(self):
         try:
-            self.conn = psycopg2.connect(database="postgres", user="postgres", password="user", host="localhost",
+            self.conn = psycopg2.connect(database="postgres", user="postgres", password="postgres", host="127.0.0.1",
                                          port="5433")
-            cur = self.conn.cursor()
-            for command in self.commands:
-                cur.execute(command)
-            cur.close()
+            self.cur = self.conn.cursor()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+
+    def create_table(self):
+        if not self.conn:
+            self.connect()
+        try:
+            self.cur.execute(self.commands["create"])
             self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
-        finally:
-            if self.conn is not None:
-                self.conn.close()
+            self.connect()
+
+    def show_table(self):
+        if not self.conn:
+            self.connect()
+        try:
+            self.cur.execute(self.commands["show"])
+            column_names = [desc[0] for desc in self.cur.description]
+            for i in column_names:
+                print("|" + i + "|", end="")
+            print("\n"+"--"*90)
+            for i in self.cur.fetchall():
+                print(i)
+
+            self.conn.commit()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+            self.connect()
 
 
 if __name__ == "__main__":
     db = DBHandler()
-    db.connect()
+    db.create_table()
+    db.show_table()
+
 

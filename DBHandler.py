@@ -1,5 +1,6 @@
 import openpyxl
 import psycopg2
+from loguru import logger
 
 
 class DBHandler:
@@ -7,7 +8,7 @@ class DBHandler:
         self.conn = None
         self.cur = None
         self.commands = {
-            "create":"""DROP TABLE IF EXISTS data; 
+            "create": """DROP TABLE IF EXISTS data; 
                CREATE TABLE data (
                     number VARCHAR(100),
                     series VARCHAR(100),
@@ -45,9 +46,10 @@ class DBHandler:
         dataframe = openpyxl.load_workbook("data.xlsx")
         dataframe1 = dataframe.active
         table = [[] for i in range(dataframe1.max_row)]
-        for row in range(1, dataframe1.max_row):
-            for col in dataframe1.iter_cols(1, dataframe1.max_column):
+        for row in range(0, dataframe1.max_row):
+            for col in dataframe1.iter_cols(0, dataframe1.max_column):
                 table[row].append(col[row].value)
+        table.remove(table[0])
         return table
 
     def connect(self):
@@ -56,7 +58,7 @@ class DBHandler:
                                          port="5433")
             self.cur = self.conn.cursor()
         except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
+            logger.info(error)
 
     def create_table(self):
         if not self.conn:
@@ -65,7 +67,7 @@ class DBHandler:
             self.cur.execute(self.commands["create"])
             self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
+            logger.info(error)
             self.connect()
 
     def show_table(self):
@@ -79,50 +81,37 @@ class DBHandler:
             print("\n"+"--"*90)
             for i in self.cur.fetchall():
                 print(i)
+                print("\n" + "--" * 90 + "\n")
 
             self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
+            logger.info(error)
             self.connect()
 
     def fill_table(self):
         if not self.conn:
             self.connect()
+        if not self.conn:
+            self.connect()
         try:
-            column_names = [desc[0] for desc in self.cur.description]
-            command = "INSERT INTO data("
-            c = 0
-            for i in column_names:
-                command += (i + ", ")
-                c += 1
-            command = command[:-2] + ") VALUES(%(val)s)"
-            frame = openpyxl.load_workbook("data.xlsx").active
-
-            for row in range(1, frame.max_row):
-                tmp = []
-                for col in frame.iter_cols(0, frame.max_column):
-                    if not col[row].value:
-                        tmp.append('')
-                    else:
-                        tmp.append(col[row].value)
-                if len(tmp) == 25:
-                    value = str(tmp).replace('[', '(').replace(']', ')')
-                    print(value)
-                    print(f"({c}, {len(tmp)})")
-                    self.cur.execute(command, {"val": value})
+            table = self.read_xlsx()
+            command = """INSERT INTO data(
+                          number, series, issue_date, ending_date, subject, communication_type, organization, place, 
+                          latitude, longitude, category, usage, RES_name, MAC, call_sign, network_id, azimuth, KA_name, 
+                          KA_place, power, rec_freq, trans_freq, formula, class, status) VALUES (
+                          %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            self.cur.executemany(command, table)
+            self.conn.commit()
 
         except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
+            logger.info(error)
             self.connect()
-
-
 
 
 if __name__ == "__main__":
     db = DBHandler()
     db.create_table()
-    db.show_table()
     #print(db.read_xlsx())
     db.fill_table()
-
+    db.show_table()
 

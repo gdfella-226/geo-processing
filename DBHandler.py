@@ -1,6 +1,7 @@
 import openpyxl
 import psycopg2
 from loguru import logger
+from config import *
 
 
 class DBHandler:
@@ -36,14 +37,19 @@ class DBHandler:
                     class VARCHAR(100),
                     status VARCHAR(100)
                     );""",
-            "show": """SELECT * FROM data"""
+            "show": """SELECT * FROM data""",
+            "insert": """INSERT INTO data(
+                          number, series, issue_date, ending_date, subject, communication_type, organization, place, 
+                          latitude, longitude, category, usage, RES_name, MAC, call_sign, network_id, azimuth, KA_name, 
+                          KA_place, power, rec_freq, trans_freq, formula, class, status) VALUES (
+                          %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         }
 
         self.connect()
 
     @staticmethod
     def read_xlsx():
-        dataframe = openpyxl.load_workbook("data.xlsx")
+        dataframe = openpyxl.load_workbook(FILENAME)
         dataframe1 = dataframe.active
         table = [[] for i in range(dataframe1.max_row)]
         for row in range(0, dataframe1.max_row):
@@ -54,8 +60,8 @@ class DBHandler:
 
     def connect(self):
         try:
-            self.conn = psycopg2.connect(database="postgres", user="postgres", password="postgres", host="127.0.0.1",
-                                         port="5433")
+            self.conn = psycopg2.connect(database=DATABASE, user=USER, password=PASSWORD, host=HOST,
+                                         port=PORT)
             self.cur = self.conn.cursor()
         except (Exception, psycopg2.DatabaseError) as error:
             logger.info(error)
@@ -81,7 +87,7 @@ class DBHandler:
             print("\n"+"--"*90)
             for i in self.cur.fetchall():
                 print(i)
-                print("\n" + "--" * 90 + "\n")
+                print("--" * 90)
 
             self.conn.commit()
         except (Exception, psycopg2.DatabaseError) as error:
@@ -95,12 +101,7 @@ class DBHandler:
             self.connect()
         try:
             table = self.read_xlsx()
-            command = """INSERT INTO data(
-                          number, series, issue_date, ending_date, subject, communication_type, organization, place, 
-                          latitude, longitude, category, usage, RES_name, MAC, call_sign, network_id, azimuth, KA_name, 
-                          KA_place, power, rec_freq, trans_freq, formula, class, status) VALUES (
-                          %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-            self.cur.executemany(command, table)
+            self.cur.executemany(self.commands["insert"], table)
             self.conn.commit()
 
         except (Exception, psycopg2.DatabaseError) as error:
@@ -111,7 +112,6 @@ class DBHandler:
 if __name__ == "__main__":
     db = DBHandler()
     db.create_table()
-    #print(db.read_xlsx())
     db.fill_table()
     db.show_table()
 

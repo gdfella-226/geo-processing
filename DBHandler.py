@@ -5,7 +5,7 @@ import json
 
 
 class DBHandler:
-    def __init__(self):
+    def __init__(self, args):
         self.conn = None
         self.cur = None
         self.commands = {
@@ -45,11 +45,15 @@ class DBHandler:
                           %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         }
 
+        self.config_data = vars(args)
         with open('config.json', 'r') as config_file:
-            self.config_data = json.load(config_file)
+            tmp = json.load(config_file)
+            for key, val in self.config_data.items():
+                if not val:
+                    self.config_data[key] = tmp[key]
+        logger.info(f'Connecting with params: {self.config_data}.....')
 
         self.connect()
-
 
     def read_xlsx(self):
         dataframe = openpyxl.load_workbook(self.config_data["filename"])
@@ -65,20 +69,24 @@ class DBHandler:
         return table
 
     def connect(self):
+        logger.info("Connecting to DB....")
         try:
             self.conn = psycopg2.connect(database=self.config_data["database"], user=self.config_data["user"],
                                          password=self.config_data["password"], host=self.config_data["host"],
                                          port=self.config_data["port"])
             self.cur = self.conn.cursor()
+            logger.info("Success!")
         except (Exception, psycopg2.DatabaseError) as error:
             logger.info(error)
 
     def create_table(self):
+        logger.info("Creating table....")
         if not self.conn:
             self.connect()
         try:
             self.cur.execute(self.commands["create"])
             self.conn.commit()
+            logger.info("Success!")
         except (Exception, psycopg2.DatabaseError) as error:
             logger.info(error)
             self.connect()
@@ -102,6 +110,7 @@ class DBHandler:
             self.connect()
 
     def fill_table(self):
+        logger.info("Inserting data to DB....")
         if not self.conn:
             self.connect()
         if not self.conn:
@@ -110,15 +119,11 @@ class DBHandler:
             table = self.read_xlsx()
             self.cur.executemany(self.commands["insert"], table)
             self.conn.commit()
-
+            logger.info("Success!")
         except (Exception, psycopg2.DatabaseError) as error:
             logger.info(error)
             self.connect()
 
 
-if __name__ == "__main__":
-    db = DBHandler()
-    db.create_table()
-    db.fill_table()
-    db.show_table()
+
 

@@ -1,7 +1,7 @@
 import openpyxl
 import psycopg2
 from loguru import logger
-from config import *
+import json
 
 
 class DBHandler:
@@ -45,23 +45,30 @@ class DBHandler:
                           %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         }
 
+        with open('config.json', 'r') as config_file:
+            self.config_data = json.load(config_file)
+
         self.connect()
 
-    @staticmethod
-    def read_xlsx():
-        dataframe = openpyxl.load_workbook(FILENAME)
+
+    def read_xlsx(self):
+        dataframe = openpyxl.load_workbook(self.config_data["filename"])
         dataframe1 = dataframe.active
         table = [[] for i in range(dataframe1.max_row)]
         for row in range(0, dataframe1.max_row):
             for col in dataframe1.iter_cols(0, dataframe1.max_column):
-                table[row].append(col[row].value)
+                if col[row].value and col[row].value != '':
+                    table[row].append(col[row].value)
+                else:
+                    table[row].append(None)
         table.remove(table[0])
         return table
 
     def connect(self):
         try:
-            self.conn = psycopg2.connect(database=DATABASE, user=USER, password=PASSWORD, host=HOST,
-                                         port=PORT)
+            self.conn = psycopg2.connect(database=self.config_data["database"], user=self.config_data["user"],
+                                         password=self.config_data["password"], host=self.config_data["host"],
+                                         port=self.config_data["port"])
             self.cur = self.conn.cursor()
         except (Exception, psycopg2.DatabaseError) as error:
             logger.info(error)

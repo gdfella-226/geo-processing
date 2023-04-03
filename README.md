@@ -1,9 +1,12 @@
 # Визуализация
 
-### Run
+### Запуск программного средства
 
-```
-pip3 install -r requirements.txt
-python3 -m main <params> 
+```console
+# установка необходимых зависимостей
+$ pip3 install --user -r requirements.txt
+
+# запуск основного модуля ПС
+$ python3 -m main <params> 
 ```
 по умолчанию параметры из конфига

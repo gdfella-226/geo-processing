@@ -1,8 +1,17 @@
+"""App for visualize geographic data
+
+"""
 import argparse
-from DBHandler import DBHandler
+from db_handler import DBHandler
 
 
 def parse():
+    """Function for parsing user's parameters
+
+    Returns:
+        Namespace: Arguments passed in code by values of flags
+
+    """
     parser = argparse.ArgumentParser(description='Convert XLSX file to PostgreSQL database')
     parser.add_argument('-f', '--filename', type=str, help='Path to XLSX file for read')
     parser.add_argument('-d', '--database', type=str, help='PostgreSQL database name')
@@ -15,10 +24,13 @@ def parse():
 
 
 def main():
-    db = DBHandler(parse())
-    db.create_table()
-    db.fill_table()
-    #db.show_table()
+    """Main function starts the app
+
+    """
+    base = DBHandler(parse())
+    #base.create_table()
+    #base.fill_table()
+    base.show_table()
 
 
 if __name__ == "__main__":

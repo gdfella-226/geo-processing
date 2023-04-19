@@ -1,0 +1,8 @@
+{
+    "database": "postgres",
+    "user":     "postgres",
+    "password": "postgres",
+    "host":     "127.0.0.1",
+    "port":     "5433",
+    "filename": "./data/data.xlsx"
+}

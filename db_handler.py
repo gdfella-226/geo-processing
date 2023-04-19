@@ -15,12 +15,13 @@ class DBHandler:
     def __init__(self, args):
         self.conn = None
         self.cur = None
-        self.config_data = vars(args)
         with open('config.json', 'r') as config_file:
-            tmp = json.load(config_file)
-            for key, val in self.config_data.items():
+            args_dict = vars(args)
+            default_data = json.load(config_file)
+            for key, val in args_dict.items():
                 if not val:
-                    self.config_data[key] = tmp[key]
+                    args_dict[key] = default_data[key]
+            self.config_data = args_dict
         logger.info(f'Connecting with params: {self.config_data}.....')
 
         self.connect()

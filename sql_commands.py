@@ -1,6 +1,9 @@
+""" SQL queries for database
+
+"""
 COMMANDS = {
-            "drop": """DROP TABLE IF EXISTS data;""",
-            "create": """
+    "drop": """DROP TABLE IF EXISTS data;""",
+    "create": """
                CREATE TABLE data (
                     number VARCHAR(100),
                     series VARCHAR(100),
@@ -28,10 +31,10 @@ COMMANDS = {
                     class VARCHAR(100),
                     status VARCHAR(100)
                     );""",
-            "show": """SELECT * FROM data""",
-            "insert": """INSERT INTO data(
+    "show": """SELECT * FROM data""",
+    "insert": """INSERT INTO data(
           number, series, issue_date, ending_date, subject, communication_type, organization, place, 
           latitude, longitude, category, usage, RES_name, MAC, call_sign, network_id, azimuth, KA_name, 
           KA_place, power, rec_freq, trans_freq, formula, class, status) VALUES (
           %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-        }
+}

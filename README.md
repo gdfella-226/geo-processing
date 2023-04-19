@@ -13,7 +13,7 @@ $ docker run --name test-postgres -p 5432:5432 -e POSTGRES_USER=postgres -e POST
 ### Зависимости:
 ```
 openpyxl==3.1.2
-psycopg2==2.9.5
+psycopg2-binary==2.9.5
 loguru==0.6.0
 ```
 

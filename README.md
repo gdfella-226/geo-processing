@@ -2,11 +2,15 @@
 
 ### Подготовка БД в Postgres
 
+Загрузка образа Postrges
 ```console
-# загрузка образа Postrges
 $ docker pull postgres:15.2
+```
 
-# запуск контейнера с некоторым набором параметров
+
+Запуск контейнера с некоторым набором параметров
+
+```console
 $ docker run --name test-postgres -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -d postgres:15.2
 ```
 
@@ -20,11 +24,13 @@ loguru==0.6.0
 
 ### Запуск программного средства
 
+Установка необходимых зависимостей
 ```console
-# установка необходимых зависимостей
 $ pip3 install --user -r requirements.txt
+```
 
-# запуск основного модуля ПС
+Запуск основного модуля ПС
+```console
 $ python3 -m main <params> 
 ```
 

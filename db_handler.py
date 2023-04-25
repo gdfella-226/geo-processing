@@ -36,7 +36,7 @@ class DBHandler:
         workbook = openpyxl.load_workbook(self.config_data["filename"])
         worksheet = workbook.active
         table = [[] for i in range(worksheet.max_row)]
-        for row in range(worksheet.max_row):
+        for row in range(1, worksheet.max_row):
             for cell in worksheet[row]:
                 if cell.value and cell.value != '':
                     table[row].append(cell.value)

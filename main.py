@@ -28,8 +28,8 @@ def main():
 
     """
     base = DBHandler(parse())
-    #base.create_table()
-    #base.fill_table()
+    base.create_table()
+    base.fill_table()
     base.show_table()
 
 

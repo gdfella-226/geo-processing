@@ -15,7 +15,7 @@ class DBHandler:
     def __init__(self, args):
         self.conn = None
         self.cur = None
-        with open('config.json', 'r') as config_file:
+        with open('config.json', 'r', encoding='UTF-8') as config_file:
             args_dict = vars(args)
             default_data = json.load(config_file)
             for key, val in args_dict.items():
@@ -44,7 +44,7 @@ class DBHandler:
                     table[row].append(None)
         try:
             int(table[0][0])
-        except:
+        except ValueError:
             table.pop(0)
         return table
 

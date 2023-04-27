@@ -5,7 +5,9 @@ import json
 import openpyxl
 import psycopg2
 from loguru import logger
+# pylint: disable=import-error
 from tools.sql_commands import COMMANDS
+# pylint: enable=import-error
 
 
 class DBHandler:

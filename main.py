@@ -2,7 +2,7 @@
 
 """
 import argparse
-from db_handler import DBHandler
+from tools.db_handler import DBHandler
 
 
 def parse():
@@ -30,7 +30,7 @@ def main():
     base = DBHandler(parse())
     base.create_table()
     base.fill_table()
-    base.show_table()
+    #base.show_table()
 
 
 if __name__ == "__main__":

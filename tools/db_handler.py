@@ -5,7 +5,7 @@ import json
 import openpyxl
 import psycopg2
 from loguru import logger
-from sql_commands import COMMANDS
+from tools.sql_commands import COMMANDS
 
 
 class DBHandler:
@@ -15,7 +15,7 @@ class DBHandler:
     def __init__(self, args):
         self.conn = None
         self.cur = None
-        with open('config.json', 'r', encoding='UTF-8') as config_file:
+        with open('./data/config.json', 'r', encoding='UTF-8') as config_file:
             args_dict = vars(args)
             default_data = json.load(config_file)
             for key, val in args_dict.items():
@@ -42,6 +42,10 @@ class DBHandler:
                     table[row].append(cell.value)
                 else:
                     table[row].append(None)
+
+        for i in table:
+            if not i:
+                table.remove(i)
         try:
             int(table[0][0])
         except ValueError:

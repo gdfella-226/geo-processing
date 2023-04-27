@@ -41,6 +41,7 @@ $ python3 -m main <params>
     '-ps' или '--password' - пароль
     '-ht' или '--host' - сервер postgres
     '-p' или '--port' - порт
+    '-a' или '--append' - флаг, позволяющий добавлять значения в бд вместо перезаписи
    По умолчанию каждый параметр принимает значение из конфигурационного json-файла
 
 
@@ -54,6 +55,7 @@ $ python3 -m main <params>
     "password": "postgres",
     "host":     "127.0.0.1",
     "port":     "5432",
-    "filename": "data.xlsx"
+    "filename": "data.xlsx",
+    "append": false
 }
 ```

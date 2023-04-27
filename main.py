@@ -2,6 +2,9 @@
 
 """
 import argparse
+
+from loguru import logger
+
 from tools.db_handler import DBHandler
 
 
@@ -19,6 +22,7 @@ def parse():
     parser.add_argument('-ps', '--password', type=str, help='Password')
     parser.add_argument('-ht', '--host', type=str, help='Host')
     parser.add_argument('-p', '--port', type=str, help='Port')
+    parser.add_argument('-a', '--append', action='store_true', help='Provides ability to append new data')
 
     return parser.parse_args()
 
@@ -27,10 +31,14 @@ def main():
     """Main function starts the app
 
     """
-    base = DBHandler(parse())
-    base.create_table()
+    args = parse()
+    base = DBHandler(args)
+    print(vars(args)["append"])
+    if not vars(args)["append"]:
+        print("Insert without clearing db")
+        base.create_table()
     base.fill_table()
-    #base.show_table()
+    # base.show_table()
 
 
 if __name__ == "__main__":

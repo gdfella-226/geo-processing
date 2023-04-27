@@ -112,8 +112,6 @@ class DBHandler:
         logger.info("Inserting data to DB....")
         if not self.conn:
             self.connect()
-        if not self.conn:
-            self.connect()
         try:
             table = self.read_xlsx()
             self.cur.executemany(COMMANDS["insert"], table)

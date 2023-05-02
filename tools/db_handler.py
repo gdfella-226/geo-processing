@@ -6,7 +6,7 @@ import openpyxl
 import psycopg2
 from loguru import logger
 # pylint: disable=import-error
-from tools.sql_commands import COMMANDS
+from tools.sql_commands import COMMANDS, create
 # pylint: enable=import-error
 
 
@@ -17,6 +17,7 @@ class DBHandler:
     def __init__(self, args):
         self.conn = None
         self.cur = None
+        self.columns = None
         with open('./data/config.json', 'r', encoding='UTF-8') as config_file:
             args_dict = vars(args)
             default_data = json.load(config_file)
@@ -25,7 +26,7 @@ class DBHandler:
                     args_dict[key] = default_data[key]
             self.config_data = args_dict
         logger.info(f'Connecting with params: {self.config_data}.....')
-
+        self.table = self.read_xlsx()
         self.connect()
 
     def read_xlsx(self):
@@ -48,6 +49,8 @@ class DBHandler:
         for i in table:
             if not i:
                 table.remove(i)
+        self.columns = table[0]
+        logger.info(self.columns)
         try:
             int(table[0][0])
         except ValueError:
@@ -79,7 +82,7 @@ class DBHandler:
             self.connect()
         try:
             self.cur.execute(COMMANDS["drop"])
-            self.cur.execute(COMMANDS["create"])
+            self.cur.execute(create(self.columns))
             self.conn.commit()
             logger.info("Success!")
         except psycopg2.DatabaseError as error:
@@ -115,8 +118,7 @@ class DBHandler:
         if not self.conn:
             self.connect()
         try:
-            table = self.read_xlsx()
-            self.cur.executemany(COMMANDS["insert"], table)
+            self.cur.executemany(COMMANDS["insert"], self.table)
             self.conn.commit()
             logger.info("Success!")
         except psycopg2.DatabaseError as error:

@@ -36,7 +36,7 @@ def main():
         print("Insert without clearing db")
         base.create_table()
     base.fill_table()
-    # base.show_table()
+    base.show_table()
 
 
 if __name__ == "__main__":

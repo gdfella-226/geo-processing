@@ -2,7 +2,7 @@
 
 """
 import argparse
-from tools.db_handler import DBHandler
+from tools.db_handler import DBHandler, logger
 
 
 def parse():
@@ -31,9 +31,8 @@ def main():
     """
     args = parse()
     base = DBHandler(args)
-    print(vars(args)["append"])
     if not vars(args)["append"]:
-        print("Insert without clearing db")
+        logger.info("Insert without clearing db")
         base.create_table()
     base.fill_table()
     base.show_table()

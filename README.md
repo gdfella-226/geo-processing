@@ -55,7 +55,7 @@ $ python3 -m main <params>
     "password": "postgres",
     "host":     "127.0.0.1",
     "port":     "5432",
-    "filename": "data.xlsx",
+    "filename": "./data/data.xlsx",
     "append": false
 }
 ```

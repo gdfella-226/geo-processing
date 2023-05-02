@@ -18,7 +18,7 @@ class DBHandler:
         self.conn = None
         self.cur = None
         self.columns = None
-        with open('./data/config.json', 'r', encoding='UTF-8') as config_file:
+        with open('./config.json', 'r', encoding='UTF-8') as config_file:
             args_dict = vars(args)
             default_data = json.load(config_file)
             for key, val in args_dict.items():

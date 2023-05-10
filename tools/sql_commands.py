@@ -4,16 +4,17 @@
 COMMANDS = {
     "drop": """DROP TABLE IF EXISTS data;""",
     "show": """SELECT * FROM data""",
-    "insert": """INSERT INTO data VALUES (
-          %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    'insert': f'INSERT INTO data VALUES ({",".join(["%s"] * 25)})'
 }
 
 
 def create(columns: list):
-    prefix = "CREATE TABLE data ("
-    for i in columns:
-        prefix += f"\"{i}\" VARCHAR(255), "
-    prefix = prefix[:-2]
-    prefix += ")"
-    print(prefix)
-    return prefix
+    """
+    Generates 'CREATE' SQL command
+    :param columns: list of columns names
+    :return: str
+    """
+    type_param = 'VARCHAR(255)'
+    columns_specification = \
+        ', '.join([f'"{column_name}" {type_param}' for column_name in columns])
+    return f'CREATE TABLE data ({columns_specification})'

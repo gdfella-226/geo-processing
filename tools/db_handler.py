@@ -2,12 +2,11 @@
 
 """
 import json
+import os
 import openpyxl
 import psycopg2
 from loguru import logger
-# pylint: disable=import-error
 from tools.sql_commands import COMMANDS, create
-# pylint: enable=import-error
 
 
 class DBHandler:
@@ -18,7 +17,7 @@ class DBHandler:
         self.conn = None
         self.cur = None
         self.columns = None
-        with open('./config.json', 'r', encoding='UTF-8') as config_file:
+        with open(os.path.join('./config', 'config.json'), 'r', encoding='UTF-8') as config_file:
             args_dict = vars(args)
             default_data = json.load(config_file)
             for key, val in args_dict.items():
@@ -81,9 +80,10 @@ class DBHandler:
         if not self.conn:
             self.connect()
         try:
-            self.cur.execute(COMMANDS["drop"])
-            self.cur.execute(create(self.columns))
-            self.conn.commit()
+            if self.config_data["overwrite"]:
+                self.cur.execute(COMMANDS["drop"])
+                self.cur.execute(create(self.columns))
+                self.conn.commit()
             logger.info("Success!")
         except psycopg2.DatabaseError as error:
             logger.info(error)

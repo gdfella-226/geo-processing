@@ -8,6 +8,20 @@ COMMANDS = {
 }
 
 
+def exists(table):
+    """
+        Generates SQL command that return true if table exists
+        :param table: table name
+        :return: str
+    """
+    return f"""SELECT EXISTS (
+        SELECT * FROM 
+            public.tables
+        WHERE
+            tablename  = 'data'
+        );"""
+
+
 def create(columns: list):
     """
     Generates 'CREATE' SQL command

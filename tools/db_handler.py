@@ -13,17 +13,23 @@ class DBHandler:
     """Class for operating with DB and table
 
     """
-    def __init__(self, args):
+
+    def __init__(self, config, data_file, args=None):
         self.conn = None
         self.cur = None
         self.columns = None
-        with open(os.path.join('./config', 'config.json'), 'r', encoding='UTF-8') as config_file:
-            args_dict = vars(args)
+        self.filename = data_file
+        with open(os.path.join('./config', config), 'r', encoding='UTF-8') as config_file:
             default_data = json.load(config_file)
-            for key, val in args_dict.items():
-                if not val:
-                    args_dict[key] = default_data[key]
-            self.config_data = args_dict
+            if args is not None:
+                args_dict = vars(args)
+                print(args)
+                for key, val in args_dict.items():
+                    if not val:
+                        args_dict[key] = default_data[key]
+                self.config_data = args_dict
+            else:
+                self.config_data = default_data
         logger.info(f'Connecting with params: {self.config_data}.....')
         self.table = self.read_xlsx()
         self.connect()
@@ -35,7 +41,7 @@ class DBHandler:
             list: data from .xlsx in python's list of lists
 
         """
-        workbook = openpyxl.load_workbook(self.config_data["filename"])
+        workbook = openpyxl.load_workbook(self.filename)
         worksheet = workbook.active
         table = [[] for i in range(worksheet.max_row)]
         for row in range(1, worksheet.max_row):
@@ -72,6 +78,18 @@ class DBHandler:
         except psycopg2.DatabaseError as error:
             logger.info(error)
 
+    def drop_table(self):
+        logger.info("Creating table....")
+        if not self.conn:
+            self.connect()
+        try:
+            self.cur.execute(COMMANDS["drop"])
+            self.conn.commit()
+            logger.info("Success!")
+        except psycopg2.DatabaseError as error:
+            logger.info(error)
+            self.connect()
+
     def create_table(self):
         """Creating postgres table based on .xlsx table
 
@@ -80,10 +98,8 @@ class DBHandler:
         if not self.conn:
             self.connect()
         try:
-            if self.config_data["overwrite"]:
-                self.cur.execute(COMMANDS["drop"])
-                self.cur.execute(create(self.columns))
-                self.conn.commit()
+            self.cur.execute(create(self.columns))
+            self.conn.commit()
             logger.info("Success!")
         except psycopg2.DatabaseError as error:
             logger.info(error)
@@ -100,7 +116,7 @@ class DBHandler:
             column_names = [desc[0] for desc in self.cur.description]
             for i in column_names:
                 print("|" + i + "|", end="")
-            print("\n"+"--"*90)
+            print("\n" + "--" * 90)
             for i in self.cur.fetchall():
                 print(i)
                 print("--" * 90)
@@ -124,3 +140,10 @@ class DBHandler:
         except psycopg2.DatabaseError as error:
             logger.info(error)
             self.connect()
+
+    def run(self):
+        if self.config_data["overwrite"]:
+            self.drop_table()
+        self.create_table()
+        self.fill_table()
+

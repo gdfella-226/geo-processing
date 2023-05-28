@@ -2,10 +2,22 @@
 
 """
 COMMANDS = {
-    "drop": """DROP TABLE IF EXISTS data;""",
-    "show": """SELECT * FROM data""",
-    'insert': f'INSERT INTO data VALUES ({",".join(["%s"] * 25)})'
+    "drop": "DROP TABLE IF EXISTS %s;".replace("'", ""),
+    "show": "SELECT * FROM %s",
+    'tables': """SELECT table_name FROM information_schema.tables WHERE table_schema NOT IN
+     ('information_schema', 'pg_catalog') AND table_schema IN('public');"""
 }
+
+
+def drop(table):
+    return f"DROP TABLE IF EXISTS {table};"
+
+
+def insert(table, content):
+    query = f"INSERT INTO {table} VALUES"
+    for line in content:
+        query += f'''('{"', '".join(line)}'),'''
+    return query[:-1] + ';'
 
 
 def exists(table):
@@ -22,13 +34,14 @@ def exists(table):
         );"""
 
 
-def create(columns: list):
+def create(name, columns: list):
     """
     Generates 'CREATE' SQL command
+    :param name: table name
     :param columns: list of columns names
     :return: str
     """
     type_param = 'VARCHAR(255)'
     columns_specification = \
         ', '.join([f'"{column_name}" {type_param}' for column_name in columns])
-    return f'CREATE TABLE data ({columns_specification})'
+    return f'CREATE TABLE {name}({columns_specification})'

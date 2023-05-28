@@ -53,13 +53,10 @@ class MainWindow(QMainWindow):
             base = DBHandler(config_files_list[0], self.data_file)
             base.run()
             QMessageBox.warning(self, "ГОТОВО!", "Данные успешно перенесены в БД")
-            # base.show_table()
         elif self.data_file is None:
             QMessageBox.warning(self, "ВНИМАНИЕ!", "Выберите '.xlsx' файл для загрузки данных")
         else:
             QMessageBox.warning(self, "ВНИМАНИЕ!", "Введите параметры запуска согласно инструкции")
-
-
 
 
 if __name__ == "__main__":

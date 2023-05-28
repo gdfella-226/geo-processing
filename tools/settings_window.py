@@ -2,6 +2,7 @@ import json
 import os
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QLineEdit, QCheckBox, QPushButton
+from tools.tables_window import Tables
 
 
 class Settings(QWidget):
@@ -17,6 +18,7 @@ class Settings(QWidget):
         self.setGeometry(100, 100, 500, 400)
         layout = QGridLayout()
         self.setLayout(layout)
+        self.tables_window = None
 
         labels = [
             QLabel("База данных:"),
@@ -30,9 +32,11 @@ class Settings(QWidget):
             self.inputs.append(QLineEdit())
             if labels[i].text() == "Пароль:":
                 self.inputs[i].setEchoMode(QLineEdit.Password)
+            """if labels[i].text() == "Таблица:":
+                table_box = QComboBox(self)"""
+
             layout.addWidget(labels[i], i, 0)
             layout.addWidget(self.inputs[i], i, 1)
-
         overwrite = QCheckBox("Перезапись", self)
         layout.addWidget(overwrite, i + 1, 0)
         self.inputs.append(overwrite)
@@ -53,6 +57,8 @@ class Settings(QWidget):
         print(user_data)
         with open(os.path.join('./config', 'test_config.json'), 'w+', encoding='UTF-8') as config_file:
             json.dump(user_data, config_file)
+        self.tables_window = Tables('test_config.json')
+        self.tables_window.show()
         self.close()
 
 

@@ -1,11 +1,11 @@
 import os
 from sys import argv, exit
+from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QApplication, \
     QLabel, QAction, QFileDialog, QMessageBox
 from tools.settings_window import Settings
 from tools.db_handler import DBHandler
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -61,6 +61,7 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(argv)
+    app.setWindowIcon(QIcon('icon.png'))
     mw = MainWindow()
     mw.show()
     exit(app.exec())

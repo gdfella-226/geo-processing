@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, \
 from tools.settings_window import Settings
 from tools.db_handler import DBHandler
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -28,12 +29,15 @@ class MainWindow(QMainWindow):
         import_action = QAction(self)
         import_action.setText("Импорт")
         import_action.triggered.connect(self.get_file)
+
         exit_action = QAction(self)
         exit_action.setText("Выход")
         exit_action.triggered.connect(exit)
+
         set_action = QAction(self)
         set_action.setText("Параметры запуска")
         set_action.triggered.connect(self.settings_window.show)
+
         run_action = QAction(self)
         run_action.setText("Запуск с текущими настройками")
 

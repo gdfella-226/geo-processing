@@ -82,6 +82,7 @@ $ python3 -m main <params>
     "password": "postgres",
     "host":     "127.0.0.1",
     "port":     "5432",
-    "overwrite": false
+    "overwrite": false,
+    "log_file": "logs.log"
 }
 ```

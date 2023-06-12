@@ -38,6 +38,7 @@ $ wsl --install
 
 В случае необходимости, установить [пакет обновления ядра Linux в WSL 2 для 64-разрядных компьютеров](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi).
 
+В настоящий момент не существует возможности запуска WSL на VMware ESXi. Это необходимо учитывать в случае работы на виртуальной машине с ОС Windows.
 
 ### Запуск контейнера с некоторым набором параметров
 
@@ -96,7 +97,9 @@ $ python -m app
 
     * Settings/Output Directory - место, где будет расположен собранный исполняемый файл
 
-    ![Alt text](img-examples/py-to-exe.png)
+    * Advanced/name - имя исполняемого файла
+
+    ![Alt text](img-examples/py-to-exe.PNG)
 
     и нажимаем **CONVERT .PY TO .EXE**. Собранный файл будет находиться в указанной директории
 

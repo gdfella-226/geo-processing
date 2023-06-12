@@ -6,17 +6,40 @@
 $ pip3 install --user -r requirements.txt
 ```
 
+Содержание файла `requirements.txt`:
+
+```
+openpyxl==3.1.2
+psycopg2==2.9.5
+loguru==0.6.0
+PyQt5==5.15.9
+auto-py-to-exe==2.35.0
+```
+При возникновении ошибки установки 'psycopg2' использовать 'psycopg2-binary'
+
+## База данных
+
+Загрузка образа Postrges:
+```console
+$ docker pull postgres:15.2
+```
+
+Запуск контейнера с некоторым набором параметров:
+
+```console
+$ docker run --name test-postgres -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -d postgres:15.2
+```
 
 ## Графический интерфейс
 
-### Запуск графического интерфейса через терминал (необходимо находиться в директории ПС)
+### Запуск графического интерфейса через терминал (необходимо находиться в корневой директории ПС)
 ```console
 $ python -m app
 ```
 
 ### Порядок работы с графическим интерфейсом
 
-1. Для загрузки файла в БД необходимо выбрать исходный .xlsx файл(Файл => Импорт)
+1. Для загрузки файла в БД необходимо выбрать исходный .xlsx файл(Файл => Выбрать)
 
     ![Import file](./img-examples/import.png)
 
@@ -60,29 +83,6 @@ $ python -m app
     ![Alt text](img-examples/py-to-exe.PNG)
 
     и нажимаем **CONVERT .PY TO .EXE**. Собранный файл будет находиться в указанной директории
-
-### Подготовка БД в Postgres
-Загрузка образа Postrges
-```console
-$ docker pull postgres:15.2
-```
-
-
-Запуск контейнера с некоторым набором параметров
-
-```console
-$ docker run --name test-postgres -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -d postgres:15.2
-```
-
-### Зависимости:
-```
-openpyxl==3.1.2
-psycopg2==2.9.5
-loguru==0.6.0
-PyQt5==5.15.9
-auto-py-to-exe==2.35.0
-```
-При возникновении ошибки установки 'psycopg2' использовать 'psycopg2-binary'
 
 ### Запуск ПС в терминале
 ```console

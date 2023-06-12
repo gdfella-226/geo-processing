@@ -24,7 +24,7 @@ class Settings(QWidget):
             QLabel("База данных:"),
             QLabel("Пользователь:"),
             QLabel("Пароль:"),
-            QLabel("Хост:"),
+            QLabel("Сервер:"),
             QLabel("Порт:")
         ]
         self.inputs = []

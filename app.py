@@ -14,9 +14,9 @@ class MainWindow(QMainWindow):
         self.data_file = None
         self.settings_window = Settings()
         self.setWindowTitle("Импорт данных РЭБ")
-        self.setWindowIcon(QIcon("icon.ico"))
+        self.setWindowIcon(QIcon(os.path.join(".", "icon.ico")))
         self.setGeometry(100, 100, 500, 400)
-        central_widget = QLabel("Manual: how to use this awesome app")
+        central_widget = QLabel("""1. Выбери файл .xlsx для импорта (Файл-Выбрать).\n2. Введи параметры подключения к БД (Настройки).\n\t\t* стандартный сервер: localhost;\n\t\t* стандартный порт: 5432.\n3. Нажми Старт-Запуск с текущими настройками.\n\nВНИМАНИЕ! Проверь наличие файла конфигурации,\nрасположенного по пути 'директория_программы/config/config_json'.\nВ случае отсутствия, создай файл по указанному пути по шаблону из README.md""")
         central_widget.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.setCentralWidget(central_widget)
         self._menu()

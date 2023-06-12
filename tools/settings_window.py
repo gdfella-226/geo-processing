@@ -2,6 +2,7 @@ import json
 import os
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QWidget, QLabel, QGridLayout, QLineEdit, QCheckBox, QPushButton
+from PyQt5.QtGui import QIcon
 from tools.tables_window import Tables
 
 
@@ -15,6 +16,7 @@ class Settings(QWidget):
     def __init__(self):
         super(Settings, self).__init__()
         self.setWindowTitle("Настройки запуска")
+        self.setWindowIcon(QIcon(os.path.join("..", "icon.ico")))
         self.setGeometry(100, 100, 500, 400)
         layout = QGridLayout()
         self.setLayout(layout)

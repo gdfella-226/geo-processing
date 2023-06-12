@@ -15,16 +15,31 @@ loguru==0.6.0
 PyQt5==5.15.9
 auto-py-to-exe==2.35.0
 ```
+
 При возникновении ошибки установки 'psycopg2' использовать 'psycopg2-binary'
 
 ## База данных
 
-Загрузка образа Postrges:
+### Загрузка образа Postrges
+
 ```console
 $ docker pull postgres:15.2
 ```
 
-Запуск контейнера с некоторым набором параметров:
+### Нюансы работы в ОС Windows
+
+Для работы в ОС Windows необходима установка Docker Engine с [официального сайта](https://docs.docker.com/desktop/install/windows-install/).
+
+Для работы Docker в Windows так же необходима установка подсистемы Linux:
+
+```console
+$ wsl --install
+```
+
+В случае необходимости, установить [пакет обновления ядра Linux в WSL 2 для 64-разрядных компьютеров](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi).
+
+
+### Запуск контейнера с некоторым набором параметров
 
 ```console
 $ docker run --name test-postgres -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=postgres -d postgres:15.2
@@ -33,6 +48,7 @@ $ docker run --name test-postgres -p 5432:5432 -e POSTGRES_USER=postgres -e POST
 ## Графический интерфейс
 
 ### Запуск графического интерфейса через терминал (необходимо находиться в корневой директории ПС)
+
 ```console
 $ python -m app
 ```
@@ -85,11 +101,13 @@ $ python -m app
     и нажимаем **CONVERT .PY TO .EXE**. Собранный файл будет находиться в указанной директории
 
 ### Запуск ПС в терминале
+
 ```console
 $ python3 -m main <params> 
 ```
 
 ### Параметры запуска:
+
     '-f' или '--filename' - путь до входного .xlsx файла (обязательный параметр)
     '-d' или '--database' - название БД
     '-u' или '--user' - имя пользователя
@@ -97,6 +115,7 @@ $ python3 -m main <params>
     '-ht' или '--host' - сервер postgres
     '-p' или '--port' - порт
     '-o' или '--overwrite' - флаг, позволяющий перезаписывать значения в бд вместо добавления
+
 По умолчанию каждый параметр (кроме filename) принимает значение из конфигурационного json-файла
 
 ### Конфигурационный файл
@@ -104,6 +123,7 @@ $ python3 -m main <params>
 При запуске программного средства без параметров параметры подключения к Postgres будут считываться из конфигурационного json-файла **./config/config-json**. В случае отсутствия директории **config** или файла **config.json**, необходимо их создать вручную.
 
 Пример оформления **config.json** представлен ниже:
+
 ```json
 {
     "database": "postgres",

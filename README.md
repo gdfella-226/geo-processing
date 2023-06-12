@@ -96,7 +96,7 @@ $ python -m app
 
     * Settings/Output Directory - место, где будет расположен собранный исполняемый файл
 
-    ![Alt text](img-examples/py-to-exe.PNG)
+    ![Alt text](img-examples/py-to-exe.png)
 
     и нажимаем **CONVERT .PY TO .EXE**. Собранный файл будет находиться в указанной директории
 

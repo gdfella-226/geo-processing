@@ -13,7 +13,8 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self)
         self.data_file = None
         self.settings_window = Settings()
-        self.setWindowTitle("Title")
+        self.setWindowTitle("Импорт данных РЭБ")
+        self.setWindowIcon(QIcon("icon.ico"))
         self.setGeometry(100, 100, 500, 400)
         central_widget = QLabel("Manual: how to use this awesome app")
         central_widget.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
@@ -27,7 +28,7 @@ class MainWindow(QMainWindow):
         run_btn = menu.addMenu("Старт")
 
         import_action = QAction(self)
-        import_action.setText("Импорт")
+        import_action.setText("Выбрать")
         import_action.triggered.connect(self.get_file)
 
         exit_action = QAction(self)
@@ -65,7 +66,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(argv)
-    app.setWindowIcon(QIcon('icon.png'))
     mw = MainWindow()
     mw.show()
     exit(app.exec())
